@@ -4,27 +4,35 @@ import CurrentUserContext from "../../../../../contexts/CurrentUserContext";
 export default function EditProfile() {
   const userContext = useContext(CurrentUserContext);
   const { currentUser, handleUpdateUser } = userContext;
-  const [name, setName] = useState(currentUser.name || "");
-  const [aboutMe, setAboutMe] = useState(currentUser.about || "");
+  const [formData, setFormData] = useState({
+    name: "",
+    about: "",
+  });
 
   useEffect(() => {
     if (currentUser) {
-      setName(currentUser.name || "");
-      setAboutMe(currentUser.about || "");
+      setFormData({
+        name: currentUser.name || "",
+        about: currentUser.about || "",
+      });
     }
   }, [currentUser]);
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-  const handleAboutMeChange = (event) => {
-    setAboutMe(event.target.value);
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleUpdateUser({ name, about: aboutMe });
+    handleUpdateUser({
+      name: formData.name,
+      about: formData.about,
+    });
   };
   return (
     <form className=" form" onSubmit={handleSubmit}>
@@ -35,8 +43,8 @@ export default function EditProfile() {
         minLength="2"
         maxLength="40"
         name="name"
-        value={name ?? ""}
-        onChange={handleNameChange}
+        value={formData.name}
+        onChange={handleChange}
         required
       />
       <span className="form__input-error"></span>
@@ -47,8 +55,8 @@ export default function EditProfile() {
         minLength="2"
         maxLength="200"
         name="about"
-        value={aboutMe ?? ""}
-        onChange={handleAboutMeChange}
+        value={formData.about}
+        onChange={handleChange}
         required
       />
       <span className="form__input-error"></span>
